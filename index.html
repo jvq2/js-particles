@@ -11,7 +11,7 @@
 			margin:0;
 			padding:0;
 			}
-		#start {
+		#start, #reset {
 			position: absolute;
 			top: 20px;
 			left: 30px;
@@ -256,7 +256,15 @@
 		
 		
 		var emitters = [];
+		function reset(){
+		
+			$('#start, #reset').toggle();
+			emitters = [];
+			
+			}
 		function start(){
+		
+			$('#start, #reset').toggle();
 			
 			emitters.push(
 				new emitter({
@@ -276,7 +284,7 @@
 			}
 			
 		$(function(){
-		
+			
 			var w = $(window)
 			
 			w.resize(function(){
@@ -284,13 +292,43 @@
 				});
 			w.trigger('resize');
 			
+			var mousedown = false;
+			
 			// mouse tracking for all emitters
 			$('#fire').mousemove(function(event){
-				var c = this;
-				emitters.map(function(e){
-					e.x = event.pageX - c.offsetLeft;
-					e.y = c.offsetHeight - (event.pageY - c.offsetTop);
-					});
+				//var c = this;
+				
+				if (!emitters.length) return;
+				
+				var e = emitters[0];
+				e.x = event.pageX - this.offsetLeft;
+				e.y = this.offsetHeight - (event.pageY - this.offsetTop);
+				
+				if (mousedown) {
+					emitters.push(
+						new emitter({
+									x: e.x,
+									y: e.y,
+									life: 0.5,
+									per_second: 2,
+									max_particles: 100,
+									f_step: fire_step,
+									f_render: fire_particle//,
+									//type: 'circle',
+									//w: 30,
+									//h: 10,
+									//radius: 3
+									})
+						);
+					}
+				
+				});
+			
+			$('#fire').mousedown(function(event){
+				mousedown = true;
+				});
+			$('#fire').mouseup(function(event){
+				mousedown = false;
 				});
 			
 			// start frame loop
@@ -298,7 +336,8 @@
 			});
 	</script>
 	
-	<button onclick="start();$(this).remove();" id="start">start</button>
+	<button onclick="start();" id="start">start</button>
+	<button onclick="reset();" style="display:none;" id="reset">reset</button>
 	<canvas id="fire" width="250" height="250"></canvas>
 	
 	
