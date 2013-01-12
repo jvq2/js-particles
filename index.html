@@ -8,19 +8,22 @@
 	<style type="text/css">
 		body, canvas {
 			background-color: #000;
-			margin:0;
-			padding:0;
+			margin: 0;
+			padding: 0;
 			}
+		
 		#start, #reset {
 			position: absolute;
 			top: 20px;
 			left: 30px;
-			z-index:1;
+			z-index: 1;
 			}
+		
 		#fire {
 			position: absolute;
-			top: 0px;
-			left: 0px;
+			top: 0;
+			left: 0;
+			color: #ffffff;
 			}
 	</style>
 </head>
@@ -39,7 +42,20 @@
 				window.setTimeout(callback, 1000 / 60);
 				};
 		})();
-	
+		
+		function particle(e){
+				this.x = 0;
+				this.y = 0;
+				this.xi = 1; // x direction
+				this.yi = 0.2; // y direction
+				this.xg = 0; // x gravity
+				this.yg = 0; // y gravity
+				this.size = 7;
+				this.scale = 1.0;
+				this.life = e.life * (Math.random() + 1) * 1000;
+				this.created = new Date().getTime();
+				this.seed = (Math.random() - 0.5) * 0.8;
+				};
 		
 		function emitter(options){
 			var defaults = {
@@ -48,7 +64,7 @@
 				max_particles: 200,
 				per_second: 20,
 				life: 1,
-				type: 'point',
+				shape: 'point',
 				radius: 15,
 				w: 20,
 				h: 20,
@@ -98,31 +114,19 @@
 			this.y = e.y;
 
 			
-			this.particle = function(){
-				this.x = 0;
-				this.y = 0;
-				//this.xi = 0; // x direction
-				//this.yi = 0; // y direction
-				//this.xg = 0; // x gravity
-				//this.yg = 0; // y gravity
-				this.size = 7;
-				this.scale = 1.0;
-				this.life = e.life * (Math.random() + 1) * 1000;
-				this.created = new Date().getTime();
-				this.seed = (Math.random() - 0.5) * 0.8;
-				};
-				
+			this.particle = e.particle || particle;
+			
 			
 			
 			var get_pos;
-			if (e.type == 'rect'){
+			if (e.shape == 'rect'){
 				get_pos = function(){return rect(e.w, e.h)};
-			} else if (e.type == 'circle') {
+			} else if (e.shape == 'circle') {
 				get_pos = function(){return circle(e.radius)};
-			} else if (e.type == 'ucircle') {
+			} else if (e.shape == 'ucircle') {
 				get_pos = function(){return ucircle(e.radius)};
-			} else if (typeof(e.type) == 'function') {
-				get_pos = e.type;
+			} else if (typeof(e.shape) == 'function') {
+				get_pos = e.shape;
 			} else {
 				get_pos = function(){return {x: 0, y: 0}};
 				}
@@ -150,7 +154,7 @@
 				
 				// emit
 				for(var i = 0; i < pte; i++){
-					var p = new this.particle();
+					var p = new this.particle(e);
 					var pos = get_pos();
 					p.x = pos.x+this.x;
 					p.y = pos.y+this.y;
@@ -275,7 +279,7 @@
 							max_particles: 1000,
 							f_step: fire_step,
 							f_render: fire_particle,
-							type: 'ucircle',
+							shape: 'ucircle',
 							//w: 30,
 							//h: 10,
 							radius: 10
@@ -314,7 +318,7 @@
 									max_particles: 100,
 									f_step: fire_step,
 									f_render: fire_particle//,
-									//type: 'circle',
+									//shape: 'circle',
 									//w: 30,
 									//h: 10,
 									//radius: 3
@@ -338,7 +342,7 @@
 	
 	<button onclick="start();" id="start">start</button>
 	<button onclick="reset();" style="display:none;" id="reset">reset</button>
-	<canvas id="fire" width="250" height="250"></canvas>
+	<canvas id="fire" width="250" height="250">Please use a more modern browser to view this demo. Thankyou</canvas>
 	
 	
 	
