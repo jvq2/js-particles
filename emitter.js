@@ -1,19 +1,29 @@
-
+// shim layer with setTimeout fallback
+window.requestAnimFrame = window.requestAnimFrame || (function(){
+	return window.requestAnimationFrame	|| 
+		window.webkitRequestAnimationFrame	|| 
+		window.mozRequestAnimationFrame		|| 
+		window.oRequestAnimationFrame		|| 
+		window.msRequestAnimationFrame		|| 
+		function(callback){
+			window.setTimeout(callback, 1000 / 60);
+			};
+	})();
 
 // Basic particle constructor
 function particle(e){
-		this.x = 0;
-		this.y = 0;
-		this.xi = 1; // x direction
-		this.yi = 0.2; // y direction
-		this.xg = 0; // x gravity
-		this.yg = 0; // y gravity
-		this.size = 7;
-		this.scale = 1.0;
-		this.life = e.life * (Math.random() + 1) * 1000;
-		this.created = new Date().getTime();
-		this.seed = (Math.random() - 0.5) * 0.8;
-		};
+	this.x = 0;
+	this.y = 0;
+	this.xi = 1; // x direction
+	this.yi = 0.2; // y direction
+	this.xg = 0; // x gravity
+	this.yg = 0; // y gravity
+	this.size = 7;
+	this.scale = 1.0;
+	this.life = e.life * (Math.random() + 1) * 1000;
+	this.created = new Date().getTime();
+	this.seed = (Math.random() - 0.5) * 0.8;
+	};
 
 
 
